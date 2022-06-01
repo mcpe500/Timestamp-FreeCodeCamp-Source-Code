@@ -91,25 +91,76 @@ const UTCResult = (unixtime) => {
 */
 // UTCResult Function After Using
 // https://codebeautify.org/jsviewer
+/*
 const UTCResult = t => {
 	var e, a = new Date(t),
 		r = a.getDay();
 	1 == r ? e = "Mon" : 2 == r ? e = "Tue" : 3 == r ? e = "Wed" : 4 == r ? e = "Thu" : 5 == r ? e = "Fri" : 6 == r ? e = "Sat" : 7 == r && (e = "Sun");
 	var n, g = a.getMonth() + 1;
-	return 1 == g ? n = "Jan" : 2 == g ? n = "Feb" : 3 == g ? n = "Mar" : 4 == g ? n = "Apr" : 5 == g ? n = "May" : 6 == g ? n = "Jun" : 7 == g ? n = "Jul" : 8 == g ? n = "Aug" : 9 == g ? n = "Sep" : 10 == g ? n = "Oct" : 11 == g ? n = "Nov" : 12 == g && (n = "Des"), e + ", " + a.getDate() + " " + n + " " + a.getFullYear() + " " + a.getHours().toString().padStart(2, "0") + ":" + a.getMinutes().toString().padStart(2, "0") + ":" + a.getSeconds().toString().padStart(2, "0")
+	return 1 == g ? n = "Jan" : 2 == g ? n = "Feb" : 3 == g ? n = "Mar" : 4 == g ? n = "Apr" : 5 == g ? n = "May" : 6 == g ? n = "Jun" : 7 == g ? n = "Jul" : 8 == g ? n = "Aug" : 9 == g ? n = "Sep" : 10 == g ? n = "Oct" : 11 == g ? n = "Nov" : 12 == g && (n = "Des"), e + ", " + a.getDate() + " " + n + " " + a.getFullYear() + " " + a.getHours().toString().padStart(2, "0") + ":" + a.getMinutes().toString().padStart(2, "0") + ":" + a.getSeconds().toString().padStart(2, "0") + " GMT"
 };
+*/
 
+
+
+const UTCResult = (date) => {
+  var UTCReturn = date.toUTCString
+  console.log(UTCResult.toString())
+}
 
 // your first API endpoint... 
-app.get("/api/:date", function (req, res) {
-  if((req.params.date).includes("-")==true){
-    var unixtime = new Date(req.params.date).getTime()
-    res.json({unix:unixtime ,utc: UTCResult(unixtime)})
-    }else{
-      var unixTimestamp = req.params.date/1000
-      var date = new Date(unixTimestamp*1000);
-      res.json({unix: req.params.date ,utc: UTCResult(date)})}
+
+app.get('/api', (req, res) => {
+  res.json(
+    {
+      "unix": new Date().getTime(),
+      "utc": new Date().toUTCString()
+    }
+  );
 });
+
+// var str ="hello";
+// str.Where(c => c == 'l').Count()  // 2
+
+app.get("/api/:date", function (req, res) {
+  var date = req.params.date.split('')
+    var unixtime = new Date((date).join("")).getTime()
+    if( isNaN(parseInt(date[4])) ){
+      var UTCTime = new Date(parseInt(unixtime)).toUTCString()
+      if (UTCTime == "Invalid Date"){
+        res.json({error: UTCTime})
+      }else{
+        res.json({unix: parseInt(unixtime), utc: UTCTime})
+      }
+    }else if( !isNaN(parseInt(date[4])) ){
+      var UTCTime = new Date(parseInt(req.params.date)).toUTCString()
+      var unixRes = Date.parse(UTCTime)
+      if (UTCTime == "Invalid Date"){
+        res.json({error: UTCTime})
+      }else{
+        res.json({unix: unixRes, utc: UTCTime})
+      }
+    }
+}) 
+
+
+  
+  // if((req.params.date).includes("-")==true){
+    
+  //   var date_string = req.params.date
+  //   var unixtime = new Date(date_string).getTime()
+  //   res.json({unix:parseInt(unixtime) ,utc: UTCResult(unixtime)})
+    
+  // }else if((req.params.date).includes("-")==false){
+    
+  //   var unixTimestamp = req.params.date/1000
+  //   var date_string = unixTimestamp*1000
+  //   var date = new Date(date_string);
+  //   res.json({unix: parseInt(req.params.date) ,utc: UTCResult(date)})
+    
+  // }else {
+  //   res.json({error: "Invalid Date"})
+  // }
 
 
 // listen for requests :)
